@@ -1,0 +1,9 @@
+function phi = harmonicOscillatorState(x, n, l)
+%phi = sqrt(l/(2^n*factorial(n)*sqrt(pi))).*...
+%      util.hermite(l.*x, n).*exp(-0.5*(l.*x).^2);
+phi = sqrt(l/(2^n*factorial(n)*sqrt(pi))).*...
+      util.hermite(l.*x, n).*exp(-0.5*(l.*x).^2);
+%phi = sqrt(l/(2^n*factorial(n)*sqrt(pi))).*...
+%      util.hermite(x, n).*exp(-0.5*x.^2);
+end
+
