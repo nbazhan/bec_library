@@ -8,6 +8,9 @@ classdef PotentialToroidal
       l;
       tof = struct('start', 1, ...
                    'end', 1.1);
+
+
+      
       R = 19.23*10^(-6);
       grid;
       config; 

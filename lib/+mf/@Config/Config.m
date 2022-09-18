@@ -1,4 +1,4 @@
-classdef Config < handle
+    classdef Config < handle
    properties
        D = 3; % dimensions 
        

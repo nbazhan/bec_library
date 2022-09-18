@@ -1,0 +1,6 @@
+function V = getVr(obj, t)
+Rc = obj.getRc(t);
+V = 0.5*(obj.w.r/obj.config.w.r)^2*...
+        (((obj.grid.X - Rc.x).^2 + (obj.grid.Y - Rc.y).^2).^0.5 - ...
+           obj.getR(t)).^2;
+end
