@@ -8,18 +8,16 @@ sv = struct();
 model = mf.Model();
 %model = mf.Model();
 V2 = struct('typ', 'toroidal', ...
-            'w', 2*pi*[110, 245], ...
-            'c', struct('xy', [4e-6, 3e-6]), ...
-            'R', [25e-6, 25e-6]);
+            'R', [30e-6, 30e-6]);
 
 V1 = struct('typ', 'toroidal', ...
-            'w', 2*pi*[110, 245], ...
+            'w', 2*pi*[300, 635], ...
             'c', struct('xy', [4e-6, 3e-6]), ...
             'R', [35e-6, 35e-6], ...
             'W', 2*pi*1);
 
 model.add_potential(V2);
-model.add_potential(V1);
+%model.add_potential(V1);
 
 %model.add_potential(struct('typ', 'vertical', ...
 %                           'W', 2*pi*1, ...
@@ -39,28 +37,24 @@ model.add_potential(V1);
 %                           'R', [6e-6, 8e-6]));
 
 init = mf.Init(struct('model', model));
-%init.t = model.to_time_dim(0);
-%init.mu = model.to_energy_dim(2e-32);
+init.t = model.to_time_dim(0.03);
 t = model.to_time_dim(0.03);
 %psi = init.get_tf();
-[psi, ~, mu] = init.get_zng(0);
-%disp(sum(abs(psi(:)).^2*model.grid.dV));
-%v = model.get_v(t);
+v = model.get_v(t);
 
 %psixy = psi(:, :, model.grid.N.z/2);
-%clf;
 %imagesc(model.grid.r.x, model.grid.r.y, abs(psixy).^2)
-%value = 0.005*max(v(:));
-%p = patch(isosurface(model.grid.r.x, model.grid.r.y, model.grid.r.z, v, value));
+value = 0.05*max(v(:));
+p = patch(isosurface(model.grid.r.x, model.grid.r.y, model.grid.r.z, v, value));
 
-%alpha(0.1);
-%p.FaceColor = 'blue';
-%p.EdgeColor = 'none';
-%view(5, 25);
+alpha(0.1);
+p.FaceColor = 'blue';
+p.EdgeColor = 'none';
+view(5, 25);
 
-%ylabel('y');
-%xlabel('x');
-%zlabel('z');
-%colorbar;
+ylabel('y');
+xlabel('x');
+zlabel('z');
+colorbar;
 %patch(model.grid.X, model.grid.Y, model.grid.Z, abs(psi).^2)
-%shg
+shg

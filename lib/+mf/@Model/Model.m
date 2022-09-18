@@ -4,7 +4,7 @@ classdef Model < handle
        D = 3; % dimensions 
        l = struct('r', 1e-6, 'z', 0.5e-6); % oscillator length
        w;
-       test = 0; % if test - 
+       test = 0; % if test - display variables during execution
        
        config = struct('hbar', 1.054571800e-34, ... % Planck constant
                        'kb', 1.38064852e-23, ... % Boltzmann constant
@@ -20,6 +20,7 @@ classdef Model < handle
                      'N', [128, 128, 32], ...
                      'L', [100e-6, 100e-6, 30e-6]);
        
+       grid_nt;
        Vs;
    end
    methods
@@ -46,17 +47,46 @@ classdef Model < handle
                                  'z', params.l(2));
               end
           end
-
           obj.init_config();
-          obj.init_grid();
+
+          obj.grid_nt = struct('GPU', obj.grid.GPU, ...
+                               'L', 2*obj.grid.L, ...
+                               'N', 2*obj.grid.N);
+          obj.grid = util.add_struct(obj.grid, obj.init_grid(obj.grid));
+          obj.grid_nt = util.add_struct(obj.grid_nt, obj.init_grid(obj.grid_nt));
           %obj.init_grid_nt();
       end
 
-      
+ %% functions
+ % calculate hamiltonian
       function H = applyham(obj, psi, V)
            Hk = conj(psi).*ifftn(obj.grid.kk.*fftn(psi));
            Hi = conj(psi).*V.*psi;
            H = Hk + Hi;
+      end
+      
+      function res = shrink(obj, psi)
+            nx = round(obj.grid.N.x/2);
+            ny = round(obj.grid.N.y/2);
+            if obj.D == 2
+                res = psi(nx + 1 : 3*nx, ny + 1 : 3*ny);
+            elseif obj.D == 3
+                nz = round(obj.grid.N.z/2);
+                res = psi(nx + 1 : 3*nx, ny + 1 : 3*ny, nz + 1 : 3*nz);
+            end
+      end
+      
+      function res = extend(obj, psi)
+            nx = round(obj.grid.N.x/2);
+            ny = round(obj.grid.N.y/2);
+            if obj.D == 2
+                res = zeros(4*nx, 4*ny);
+                res(nx + 1 : 3*nx, ny + 1 : 3*ny) = psi;
+            elseif obj.D == 3
+                nz = round(obj.grid.N.z/2);
+                res = zeros(4*nx, 4*ny, 4*nz);
+                res(nx + 1 : 3*nx, ny + 1 : 3*ny, nz + 1 : 3*nz) = psi;
+            end
       end
       
 

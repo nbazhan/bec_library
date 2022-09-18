@@ -1,9 +1,20 @@
-function res = myPolylog(s, z)
+function [y, errors] = my_polylog(n,z) 
+%% polylog - Computes the n-based polylogarithm of z: Li_n(z)
 
-N = size(z, 1);
-r = linspace(-1, 1, N);
-res = zeros('like', z);
-for i = 1 : 100
-    res = res + z.^i/i^s;
+if nargin~=2
+    errors=1;
+    error('[Error in: polylog function] Inappropriate number of input arguments!')
+end
+
+% display more digits in Matlab terminal:
+%format long
+
+nsum = 100;
+y = zeros(size(z),'like',z);
+tmp = ones(size(z),'like',z);
+
+for i=1:nsum
+    tmp=tmp.*z; 
+    y = y + tmp./i.^n;
 end
 

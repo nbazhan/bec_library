@@ -1,18 +1,24 @@
-function V = get_v_vertical(obj, t)
+function v = get_v_vertical(obj, t, varargin)
 v = 0;
 u = obj.get_u(t);
-phi = obj.W*obj.model.config.to_time(t);
+phi = obj.W*t;
 
-r2 = obj.model.grid.X.^2 + obj.model.grid.Y.^2;
+if any(strcmp(varargin, 'nt'))
+    grid = obj.model.grid_nt;
+else
+    grid = obj.model.grid;
+end
+
+r2 = grid.X.^2 + grid.Y.^2;
 filter = (r2 >= obj.rlim(1)).*(r2 <= obj.rlim(2));
 
 if obj.n > 0
     for i = 1 : obj.n
-        theta =  ((obj.model.grid.X.*cos(phi + obj.phi0(i)) + ...
-                   obj.model.grid.Y.*sin(phi + obj.phi0(i))) > 0);
+        theta =  ((grid.X.*cos(phi + obj.phi(i)) + ...
+                   grid.Y.*sin(phi + obj.phi(i))) > 0);
         v = v + u*exp(-(1/(2*obj.width^2))*...
-                     (obj.model.grid.X.*sin(phi + obj.phi(i))- ...
-                      obj.model.grid.Y.*cos(phi + obj.phi0(i))).^2).*theta;    
+                     (grid.X.*sin(phi + obj.phi(i))- ...
+                      grid.Y.*cos(phi + obj.phi(i))).^2).*theta;    
     end
 end
 v = v.*filter;
